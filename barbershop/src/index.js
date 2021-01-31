@@ -9,9 +9,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 const application  = (
     <BrowserRouter>
-      <React.StrictMode>
-        <App/>
-      </React.StrictMode>
+        <React.StrictMode>
+            <App/>
+        </React.StrictMode>
     </BrowserRouter>
 )
 
