@@ -1,6 +1,6 @@
 const { userService: { findUserByEmail, findUserByPhoneNumber } } = require('../services');
 const { ErrorHandler, errors } = require('../errors');
-const { responseCodes: { BAD_REQUEST } } = require('../config');
+const { responseCodes: { BAD_REQUEST, OK } } = require('../config');
 const { userValidator } = require('../validators');
 
 module.exports = {
@@ -20,10 +20,10 @@ module.exports = {
     checkEmailAvailability: async (req, res, next) => {
         try {
             const {email} = req.body;
-
             const foundUser = await findUserByEmail(email);
 
             if (foundUser) {
+                // return res.status(errors.NOT_VALID_EMAIL.code).json(errors.NOT_VALID_EMAIL.message);
                 return next(
                     new ErrorHandler(
                         errors.NOT_VALID_EMAIL.message,
@@ -53,6 +53,28 @@ module.exports = {
             }
 
             next();
+        } catch (e) {
+            next(e);
+        }
+    },
+
+    checkEmailForReact: async (req,res,next) => {
+        try {
+            const {email} = req.body;
+            const foundUser = await findUserByEmail(email);
+
+            if (foundUser) {
+                return res.status(errors.NOT_VALID_EMAIL.code).json(errors.NOT_VALID_EMAIL.message);
+                // return next(
+                //     new ErrorHandler(
+                //         errors.NOT_VALID_EMAIL.message,
+                //         errors.NOT_VALID_EMAIL.code
+                //     )
+                // );
+            }
+            if (!foundUser) {
+                return res.status(200).json();
+            }
         } catch (e) {
             next(e);
         }
