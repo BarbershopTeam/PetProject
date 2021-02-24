@@ -9,7 +9,9 @@ import Input from '../Input/Input';
 import './Registration.css';
 
 function Registration(props) {
-  const [isAvailable, setIsAvailable] = useState(true);
+  const [isEmailAvailable, setIsEmailAvailable] = useState(true);
+  const [isPhoneAvailable, setIsPhoneAvailable] = useState(true);
+  const [passwords, setPasswords] = useState({ password: '', confirmPassword: '' });
 
   const availabilityChecker = async (type, value) => {
     const request = {
@@ -19,9 +21,15 @@ function Registration(props) {
       },
       body: JSON.stringify({ [type]: value }),
     };
+
     const response = await fetch('http://localhost:420/signup/email', request);
-    console.log(response.status);
-    (response.status === 400) ? setIsAvailable(false) : setIsAvailable(true);
+
+    if (type === 'email') {
+      (response.status === 400) ? setIsEmailAvailable(false) : setIsEmailAvailable(true);
+    }
+    if (type === 'tel') {
+      (response.status === 400) ? setIsPhoneAvailable(false) : setIsPhoneAvailable(true);
+    }
   };
 
   return (
@@ -48,7 +56,7 @@ function Registration(props) {
             pattern={EMAIL}
             error={errors.INVALID_EMAIL}
             availabilityChecker={availabilityChecker}
-            isAvailable={isAvailable}
+            isEmailAvailable={isEmailAvailable}
           />
         </Form.Group>
 
@@ -56,22 +64,38 @@ function Registration(props) {
           <Form.Label>Номер телефону</Form.Label>
           <Input
             name="phoneNumber"
-            type="number"
+            type="tel"
             placeholder="Введіть номер телефону"
             pattern={PHONE_NUMBER}
+            error={errors.INVALID_PHONE}
             availabilityChecker={availabilityChecker}
-            isAvailable={isAvailable}
+            isPhoneAvailable={isPhoneAvailable}
           />
         </Form.Group>
 
         <Form.Group controlId="formBasicPassword">
           <Form.Label>Пароль</Form.Label>
-          <Input name="password" type="password" placeholder="Введіть пароль" pattern={PASSWORD} />
+          <Input
+            name="password"
+            type="password"
+            placeholder="Введіть пароль"
+            pattern={PASSWORD}
+            error={errors.INVALID_PASSWORD}
+            passwords={passwords}
+            setPasswords={setPasswords}
+            onBlur={(event) => console.log(event.target.value)}
+          />
         </Form.Group>
 
         <Form.Group controlId="formBasicPassword">
           <Form.Label>Повторіть пароль</Form.Label>
-          <Input name="confirmPassword" type="password" placeholder="Повторіть пароль" />
+          <Input
+            name="confirmPassword"
+            type="password"
+            placeholder="Повторіть пароль"
+            passwords={passwords}
+            setPasswords={setPasswords}
+          />
         </Form.Group>
 
         <Form.Group controlId="formBasicCheckbox">
