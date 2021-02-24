@@ -9,6 +9,9 @@ import Input from '../Input/Input';
 import './Registration.css';
 
 function Registration(props) {
+  const [user, setUser] = useState({
+    name: '', password: '', phoneNumber: '', email: '',
+  });
   const [isEmailAvailable, setIsEmailAvailable] = useState(true);
   const [isPhoneAvailable, setIsPhoneAvailable] = useState(true);
   const [passwords, setPasswords] = useState({ password: '', confirmPassword: '' });
@@ -32,10 +35,23 @@ function Registration(props) {
     }
   };
 
+  const register = async (event) => {
+    event.preventDefault();
+    const request = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(user),
+    };
+    const response = await fetch('http://localhost:420/signup', request);
+    console.log(response);
+  };
+
   return (
 
     <Container>
-      <Form>
+      <Form onSubmit={(event) => register(event)}>
         <Form.Group controlId="formBasicName">
           <Form.Label>Ваше ім'я</Form.Label>
           <Input
@@ -44,6 +60,8 @@ function Registration(props) {
             placeholder="Введіть ваше ім'я"
             pattern={NAME}
             error={errors.INVALID_NAME}
+            setUser={setUser}
+            user={user}
           />
         </Form.Group>
 
@@ -57,6 +75,8 @@ function Registration(props) {
             error={errors.INVALID_EMAIL}
             availabilityChecker={availabilityChecker}
             isEmailAvailable={isEmailAvailable}
+            setUser={setUser}
+            user={user}
           />
         </Form.Group>
 
@@ -70,6 +90,8 @@ function Registration(props) {
             error={errors.INVALID_PHONE}
             availabilityChecker={availabilityChecker}
             isPhoneAvailable={isPhoneAvailable}
+            setUser={setUser}
+            user={user}
           />
         </Form.Group>
 
@@ -83,7 +105,8 @@ function Registration(props) {
             error={errors.INVALID_PASSWORD}
             passwords={passwords}
             setPasswords={setPasswords}
-            onBlur={(event) => console.log(event.target.value)}
+            setUser={setUser}
+            user={user}
           />
         </Form.Group>
 

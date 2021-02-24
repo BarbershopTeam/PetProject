@@ -40,6 +40,7 @@ module.exports = {
     checkPhoneNumberAvailability: async (req, res, next) => {
         try {
             const {phoneNumber} = req.body;
+            const foundUser = await findUserByPhoneNumber(phoneNumber);
 
 
             if (foundUser) {

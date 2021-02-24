@@ -54,6 +54,9 @@ function Input(props) {
           if (!error && props.availabilityChecker && event.target.value) {
             props.availabilityChecker(props.type, event.target.value);
           }
+          if (props.name !== 'confirmPassword' && !error && event.target.value) {
+            props.setUser((prevState) => ({ ...prevState, [props.name]: event.target.value }));
+          }
         }}
       />
       <span

@@ -1,5 +1,6 @@
 const { authService: { createUser } } = require('../services');
 const { passwordHelper: { hash } } = require('../helpers');
+const { OK } = require('../config/response-codes');
 
 module.exports = {
     registerUser: async (req, res, next) => {
@@ -9,9 +10,9 @@ module.exports = {
             const hashedPassword = await hash(password);
 
             Object.assign(req.body, { password: hashedPassword });
-            const newUser = await createUser(req.body);
+            await createUser(req.body);
 
-            res.json(newUser);
+            res.status(OK).json();
         } catch (e) {
             next(e);
         }
