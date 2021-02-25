@@ -3,7 +3,7 @@ import { errors } from '../../errors';
 
 function Input(props) {
   const [error, setError] = useState('');
-  const [inputValue, setInputValue] = useState();
+  const [inputValue, setInputValue] = useState('');
 
   const validator = (value) => {
     setError('');
@@ -11,23 +11,24 @@ function Input(props) {
       setError(errors.REQUIRED_FIELD);
       return;
     }
-    if (!props.pattern.test(value)) {
+    if (props.pattern && !props.pattern.test(value)) {
       setError(props.error);
     }
   };
 
   useEffect(() => {
     setError('');
-    if (!props.isAvailable) {
-      if (props.type === 'email') {
-        setError(errors.EMAIL_IS_NOT_AVAILABLE);
-        return;
-      }
-      if (props.type === 'number') {
-        setError(errors.NUMBER_IS_NOT_AVAILABLE);
-      }
+    if (!props.isEmailAvailable && props.type === 'email') {
+      setError(errors.EMAIL_IS_NOT_AVAILABLE);
     }
-  }, [props.isAvailable]);
+
+    if (!props.isPhoneAvailable && props.type === 'tel') {
+      setError(errors.NUMBER_IS_NOT_AVAILABLE);
+    }
+    if (props.name === 'confirmPassword' && props.passwords.confirmPassword !== '') {
+      props.passwords.confirmPassword === props.passwords.password ? setError('') : setError(errors.PASSWORDS_DO_NOT_MATCH);
+    }
+  }, [props.isEmailAvailable, props.isPhoneAvailable, props.passwords]);
 
   return (
     <div>
@@ -35,13 +36,28 @@ function Input(props) {
         name={props.name}
         type={props.type}
         placeholder={props.placeholder}
-        onChange={(event) => validator(event.target.value)}
-        onBlur={async (event) => {
-          if (!error && props.availabilityChecker) {
-            props.availabilityChecker(props.type, event.target.value);
+        onChange={(event) => {
+          setInputValue(event.target.value);
+          validator(event.target.value);
+          if (props.name === 'password') {
+            props.setPasswords((prevState) => ({
+              password: event.target.value, confirmPassword: prevState.confirmPassword,
+            }));
+          }
+          if (props.name === 'confirmPassword') {
+            props.setPasswords((prevState) => ({
+              password: prevState.password, confirmPassword: event.target.value,
+            }));
           }
         }}
-        onInput={(event) => setInputValue(event)}
+        onBlur={(event) => {
+          if (!error && props.availabilityChecker && event.target.value) {
+            props.availabilityChecker(props.type, event.target.value);
+          }
+          if (props.name !== 'confirmPassword' && !error && event.target.value) {
+            props.setUser((prevState) => ({ ...prevState, [props.name]: event.target.value }));
+          }
+        }}
       />
       <span
         style={inputValue ? { display: '' } : { display: 'none' }}
