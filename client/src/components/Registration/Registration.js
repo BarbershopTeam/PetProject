@@ -32,7 +32,7 @@ function Registration(props) {
       body: JSON.stringify({ [type]: value }),
     };
 
-    const response = await fetch('http://localhost:420/signup/email', request);
+    const response = await fetch('http://localhost:420/auth/email', request);
 
     if (type === 'email') {
       (response.status === 400) ? setIsEmailAvailable(false) : setIsEmailAvailable(true);
@@ -51,7 +51,7 @@ function Registration(props) {
       },
       body: JSON.stringify(user),
     };
-    const response = await fetch('http://localhost:420/signup', request);
+    const response = await fetch('http://localhost:420/auth/signup', request);
     console.log(response);
   };
 

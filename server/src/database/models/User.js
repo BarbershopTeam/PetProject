@@ -1,5 +1,17 @@
 const { Schema, model } = require('mongoose');
 
+const tokenSchema = {
+    access_token: {
+        type: String,
+        required: true
+    },
+    refresh_token: {
+        type: String,
+        required: true
+    }
+};
+
+
 const UserSchema = new Schema({
     name: {
         type: String,
@@ -19,7 +31,8 @@ const UserSchema = new Schema({
     },
     bookings: {
         type: Array,
-    }
+    },
+    tokens: [tokenSchema]
 });
 
 module.exports = model('user', UserSchema);
