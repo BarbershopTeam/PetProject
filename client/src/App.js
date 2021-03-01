@@ -6,6 +6,7 @@ import Booking from './components/Booking/Booking';
 import Team from './components/Team/Team';
 import Login from './components/Login/Login';
 import Registration from './components/Registration/Registration';
+import UserAgreement from './components/User-Agreement/User-Agreement'
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
         <Route path="/team" component={Team} />
         <Route path="/login" component={Login} />
         <Route path="/signup" component={Registration} />
+        <Route path="/user-agreement" component={UserAgreement} />
 
         <Route path="/" render={() => <h1>HOME</h1>} />
         <Route render={() => <h1>Error 404</h1>} />

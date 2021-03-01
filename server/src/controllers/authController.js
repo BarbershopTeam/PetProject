@@ -1,5 +1,5 @@
-const { authService: { createUser } } = require('../services');
-const { passwordHelper: { hash } } = require('../helpers');
+const { authService: { createUser, createTokenPair } } = require('../services');
+const { tokenizer, passwordHelper: { hash } } = require('../helpers');
 const { OK } = require('../config/response-codes');
 
 module.exports = {
@@ -16,5 +16,20 @@ module.exports = {
         } catch (e) {
             next(e);
         }
+    },
+
+    loginUser: async (req, res, next) => {
+        try {
+            const { id } = req.user;
+
+            const token_pair = tokenizer();
+
+            await createTokenPair(id, token_pair);
+
+            res.status(OK).json(req.user);
+
+        } catch (e) {
+            next(e)
+        }
     }
-}
+    }

@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="app" type="NodeJSConfigurationType" path-to-js-file="App.js" working-dir="$PROJECT_DIR$/barbershop/src">
+  <configuration default="false" name="app" type="NodeJSConfigurationType" path-to-js-file="$PROJECT_DIR$/client/src/App.js" working-dir="$PROJECT_DIR$/client/src">
     <envs>
       <env name="DEBUG" value="server:*" />
     </envs>

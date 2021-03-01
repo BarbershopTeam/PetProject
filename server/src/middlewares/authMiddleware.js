@@ -1,7 +1,9 @@
 const { userService: { findUserByEmail, findUserByPhoneNumber } } = require('../services');
-const { ErrorHandler, errors } = require('../errors');
-const { responseCodes: { BAD_REQUEST, OK } } = require('../config');
+const { ErrorHandler, errors: { WRONG_USERNAME_OR_PASS } } = require('../errors');
+const { responseCodes: { BAD_REQUEST } } = require('../config');
 const { userValidator } = require('../validators');
+const { passwordHelper: { compare } } = require('../helpers');
+
 
 module.exports = {
     registrationValidator: async (req, res, next) => {
@@ -23,7 +25,6 @@ module.exports = {
             const foundUser = await findUserByEmail(email);
 
             if (foundUser) {
-                // return res.status(errors.NOT_VALID_EMAIL.code).json(errors.NOT_VALID_EMAIL.message);
                 return next(
                     new ErrorHandler(
                         errors.NOT_VALID_EMAIL.message,
@@ -84,6 +85,25 @@ module.exports = {
         } catch (e) {
             next(e);
         }
-    }
+    },
 
-};
+    checkCredentials: async (req, res, next) => {
+        try {
+            const { email, password } = req.body;
+
+            const user = await findUserByEmail(email);
+
+            if (!user) {
+                throw new ErrorHandler(WRONG_USERNAME_OR_PASS.message, WRONG_USERNAME_OR_PASS.code);
+            }
+
+            await compare(password, user.password);
+
+            req.user = user;
+
+            next();
+        } catch (e) {
+            next(e);
+        }
+    }
+}

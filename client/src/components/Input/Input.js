@@ -30,6 +30,10 @@ function Input(props) {
     }
   }, [props.isEmailAvailable, props.isPhoneAvailable, props.passwords]);
 
+  useEffect(() => {
+    props.setIsError(error);
+  }, [error]);
+
   return (
     <div>
       <input
@@ -57,6 +61,7 @@ function Input(props) {
           if (props.name !== 'confirmPassword' && !error && event.target.value) {
             props.setUser((prevState) => ({ ...prevState, [props.name]: event.target.value }));
           }
+          props.setIsError(error);
         }}
       />
       <span

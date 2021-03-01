@@ -12,9 +12,16 @@ function Registration(props) {
   const [user, setUser] = useState({
     name: '', password: '', phoneNumber: '', email: '',
   });
+  const [passwords, setPasswords] = useState({ password: '', confirmPassword: '' });
+
   const [isEmailAvailable, setIsEmailAvailable] = useState(true);
   const [isPhoneAvailable, setIsPhoneAvailable] = useState(true);
-  const [passwords, setPasswords] = useState({ password: '', confirmPassword: '' });
+  const [isError, setIsError] = useState(null);
+  const [checked, setChecked] = useState(false);
+
+  const {
+    name, password, email, phoneNumber,
+  } = user;
 
   const availabilityChecker = async (type, value) => {
     const request = {
@@ -25,7 +32,7 @@ function Registration(props) {
       body: JSON.stringify({ [type]: value }),
     };
 
-    const response = await fetch('http://localhost:420/signup/email', request);
+    const response = await fetch('http://localhost:420/auth/email', request);
 
     if (type === 'email') {
       (response.status === 400) ? setIsEmailAvailable(false) : setIsEmailAvailable(true);
@@ -44,7 +51,7 @@ function Registration(props) {
       },
       body: JSON.stringify(user),
     };
-    const response = await fetch('http://localhost:420/signup', request);
+    const response = await fetch('http://localhost:420/auth/signup', request);
     console.log(response);
   };
 
@@ -62,6 +69,7 @@ function Registration(props) {
             error={errors.INVALID_NAME}
             setUser={setUser}
             user={user}
+            setIsError={setIsError}
           />
         </Form.Group>
 
@@ -77,6 +85,7 @@ function Registration(props) {
             isEmailAvailable={isEmailAvailable}
             setUser={setUser}
             user={user}
+            setIsError={setIsError}
           />
         </Form.Group>
 
@@ -92,6 +101,7 @@ function Registration(props) {
             isPhoneAvailable={isPhoneAvailable}
             setUser={setUser}
             user={user}
+            setIsError={setIsError}
           />
         </Form.Group>
 
@@ -107,6 +117,7 @@ function Registration(props) {
             setPasswords={setPasswords}
             setUser={setUser}
             user={user}
+            setIsError={setIsError}
           />
         </Form.Group>
 
@@ -118,28 +129,40 @@ function Registration(props) {
             placeholder="Повторіть пароль"
             passwords={passwords}
             setPasswords={setPasswords}
+            setIsError={setIsError}
           />
         </Form.Group>
 
         <Form.Group controlId="formBasicCheckbox">
           <Form.Check
             type="checkbox"
+            onChange={() => setChecked(!checked)}
             label={(
-              <label>
-                Погодитись з
+              <span>
+                <span>Погодитись з </span>
                 <button
                   id="link-button"
+                  type="button"
                   onClick={() => props.history.push('/user-agreement')}
                 >
                   користувацькою
                   угодою
                 </button>
-              </label>
+              </span>
 )}
+
           />
         </Form.Group>
 
-        <Button variant="primary" type="submit">
+        <Button
+          variant="primary"
+          type="submit"
+          disabled={
+            isError
+            || !(name && password && phoneNumber && email && passwords.confirmPassword)
+            || !checked
+          }
+        >
           Зареєструватись
         </Button>
       </Form>
